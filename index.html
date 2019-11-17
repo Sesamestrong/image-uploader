@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta type="baseURL" content="https://script.google.com/a/mcpsmd.net/macros/s/AKfycbywnwOAKEF302Vg1_VILBh70A3lqLNC7rJ04bsemsi0vDYwgM4/exec">
+  </head>
+  <body>
+  Session ID: <input readonly="" id="deviceID"/>
+  <video id="webcam" autoplay="true">
+  </video>
+  <br/>
+  <button id="toggle">Saving as Google Sheet Rows</button>
+    <script>
+    const video=document.querySelector("#webcam");
+    const getMed=navigator.mediaDevices.getUserMedia;
+    const time=1;//5 seconds
+    const deviceID=Math.random().toString().replace("0.","");
+    document.querySelector("#deviceID").value=deviceID;
+    const baseURL=document.querySelector("meta[type=baseURL]").content;
+    let saveInSheet=true;
+    document.querySelector("#toggle").addEventListener("click",function(){
+      saveInSheet=!saveInSheet;
+      this.innerText="Saving as "+(saveInSheet?"Google Sheet Rows":"Images");
+    });
+    
+    (async ()=>{
+    if(getMed){
+//    alert("Hey, gonna try it...");
+    const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
+    video.srcObject=stream;
+    } else throw new Error("I need webcam");
+//    alert("Past it!");
+    const copyCanvas=document.createElement("canvas");
+    copyCanvas.style.display="none";
+    document.body.appendChild(copyCanvas);
+    const copyCtx=copyCanvas.getContext("2d");
+    const scheduledUpload=setInterval(()=>{
+    copyCanvas.width=video.videoWidth;
+    copyCanvas.height=video.videoHeight;
+    copyCtx.drawImage(video,0,0);
+    const dataUrl=copyCanvas.toDataURL('image/jpeg').match(/([^/]+\/[^/]+);([^,]+),(.*)$/).slice(1);
+    fetch(baseURL.replace("dev","exec"),{credentials:'include',method:"POST",body:JSON.stringify(
+    {
+      req:saveInSheet?"saveImage":"uploadImage",
+      type:dataUrl[0],
+      encoding:dataUrl[1],
+      data:dataUrl[2],
+      time:+(new Date()),
+      device:deviceID,
+      saving:"Ant Data"
+    }
+    ),headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+    },mode:'no-cors'});
+//    google.script.run[saveInSheet?"saveImage":"uploadImage"]({
+//      type:dataUrl[0],
+//      encoding:dataUrl[1],
+//      data:dataUrl[2],
+//      time:+(new Date()),
+//      device:deviceID,
+//      saving:"Ant Data"
+//    });
+    
+    },time*1000);
+    })().catch(err=>alert("Loser."+err));
+    
+    </script>
+  </body>
+</html>
