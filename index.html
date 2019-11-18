@@ -13,7 +13,7 @@
     <script>
     const video=document.querySelector("#webcam");
     const getMed=navigator.mediaDevices.getUserMedia;
-    const time=1;//5 seconds
+    const time=30;//seconds
     const deviceID=Math.random().toString().replace("0.","");
     document.querySelector("#deviceID").value=deviceID;
     const baseURL=document.querySelector("meta[type=baseURL]").content;
