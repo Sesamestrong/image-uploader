@@ -2,18 +2,31 @@
 <html>
   <head>
     <base target="_top">
+    <style>
+      * {
+      width:100vw;
+      }
+      video {
+        width:10vw;
+        height:auto;
+      }
+    </style>
     <meta type="baseURL" content="https://script.google.com/a/mcpsmd.net/macros/s/AKfycbywnwOAKEF302Vg1_VILBh70A3lqLNC7rJ04bsemsi0vDYwgM4/exec">
   </head>
   <body>
   Session ID: <input readonly="" id="deviceID"/>
-  <video id="webcam" autoplay="true">
-  </video>
+  <br/>
   <br/>
   <button id="toggle">Saving as Google Sheet Rows</button>
+  <span id="status">Not yet started</span>
+  <video id="webcam">
+  </video>
     <script>
     const video=document.querySelector("#webcam");
     const getMed=navigator.mediaDevices.getUserMedia;
     const time=30;//seconds
+    const status=document.querySelector("#status");
+    status.innerText="Script started";
     const deviceID=Math.random().toString().replace("0.","");
     document.querySelector("#deviceID").value=deviceID;
     const baseURL=document.querySelector("meta[type=baseURL]").content;
@@ -28,6 +41,8 @@
 //    alert("Hey, gonna try it...");
     const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
     video.srcObject=stream;
+    video.play();
+    status.innerText="Video active and connected to the src object...";
     } else throw new Error("I need webcam");
 //    alert("Past it!");
     const copyCanvas=document.createElement("canvas");
