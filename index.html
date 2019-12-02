@@ -78,6 +78,7 @@
       copyCtx.drawImage(video,0,0);
       const dataUrl=copyCanvas.toDataURL('image/jpeg').match(/([^/]+\/[^/]+);([^,]+),(.*)$/).slice(1);
       const dateNow=new Date();
+      if(dateNow) status.innerText+="\nDone?";
       const dateNum=dateNow.getTime();
       status.innerText+="\n"+(dateNum,dateNow);
       fetch(baseURL.replace("dev","exec"),{credentials:'include',method:"POST",body:JSON.stringify(
