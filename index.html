@@ -77,13 +77,16 @@
       copyCanvas.height=video.videoHeight;
       copyCtx.drawImage(video,0,0);
       const dataUrl=copyCanvas.toDataURL('image/jpeg').match(/([^/]+\/[^/]+);([^,]+),(.*)$/).slice(1);
+      const dateNow=new Date();
+      const dateNum=dateNow.getTime();
+      status.innerText+="\n"+(dateNum,dateNow);
       fetch(baseURL.replace("dev","exec"),{credentials:'include',method:"POST",body:JSON.stringify(
       {
         req:saveInSheet?"saveImage":"uploadImage",
         type:dataUrl[0],
         encoding:dataUrl[1],
         data:dataUrl[2],
-        time:new Date().getTime(),
+        time:dateNum,
         device:deviceID,
         saving:"Ant Data"
       }
