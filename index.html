@@ -14,7 +14,8 @@
       }
       
       video {
-        width:10vw;
+        height:50vh;
+        width:auto;
         display:block;
         height:auto;
       }
@@ -41,6 +42,7 @@
     <video id="webcam"></video>
     
     <script>
+      window.onerror=(e)=>alert("Error: "+e);
       const video=document.querySelector("#webcam");
       const getMed=navigator.mediaDevices.getUserMedia;
       const time=30;//seconds
@@ -54,11 +56,11 @@
         saveInSheet=!saveInSheet;
         this.innerText="Saving as "+(saveInSheet?"Google Sheet Rows":"Images");
       });
-
+      const isiOS=navigator.userAgent.includes("iPhone");
       (async ()=>{
       if(getMed){
   //    alert("Hey, gonna try it...");
-      const stream=await new Promise((resolve,reject)=>navigator.getUserMedia({audio:false,video:true},stream=>resolve(stream),err=>reject(err)));
+      const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
       video.srcObject=stream;
       video.play();
       status.innerText="Video active and connected to the src object...";
@@ -68,7 +70,9 @@
       copyCanvas.style.display="none";
       document.body.appendChild(copyCanvas);
       const copyCtx=copyCanvas.getContext("2d");
-      const scheduledUpload=setInterval(()=>{
+
+      const scheduledUpload=setInterval(async ()=>{
+      if(isiOS) video.srcObject=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
       copyCanvas.width=video.videoWidth;
       copyCanvas.height=video.videoHeight;
       copyCtx.drawImage(video,0,0);
@@ -86,14 +90,6 @@
       ),headers: {
           'Content-Type': 'text/plain;charset=utf-8',
       },mode:'no-cors'});
-  //    google.script.run[saveInSheet?"saveImage":"uploadImage"]({
-  //      type:dataUrl[0],
-  //      encoding:dataUrl[1],
-  //      data:dataUrl[2],
-  //      time:+(new Date()),
-  //      device:deviceID,
-  //      saving:"Ant Data"
-  //    });
 
       },time*1000);
       })().catch(err=>alert("Loser."+err));
