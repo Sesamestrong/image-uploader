@@ -39,7 +39,7 @@
       <p id="status">Not yet started</p>
     </div>
     
-    <video id="webcam"></video>
+    <video id="webcam" autoplay playsinline></video>
     
     <script>
       window.onerror=(e)=>alert("Error: "+e);
@@ -72,15 +72,15 @@
       const copyCtx=copyCanvas.getContext("2d");
 
       const scheduledUpload=setInterval(async ()=>{
-      if(isiOS) video.srcObject=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
       copyCanvas.width=video.videoWidth;
       copyCanvas.height=video.videoHeight;
       copyCtx.drawImage(video,0,0);
       const dataUrl=copyCanvas.toDataURL('image/jpeg').match(/([^/]+\/[^/]+);([^,]+),(.*)$/).slice(1);
+      status.innerText="\nStarting...";
       const dateNow=new Date();
-      if(dateNow) status.innerText+="\nDone?";
+      if(dateNow) status.innerText="\nDone?";
       const dateNum=dateNow.getTime();
-      status.innerText+="\n"+(dateNum,dateNow);
+      status.innerText="\n"+(dateNum,dateNow);
       fetch(baseURL.replace("dev","exec"),{credentials:'include',method:"POST",body:JSON.stringify(
       {
         req:saveInSheet?"saveImage":"uploadImage",
